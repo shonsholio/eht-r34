@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ministerio de Música - Retiro Emaús</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-stone-50 text-stone-800 font-sans min-h-screen pb-16">
+
+  <!-- Header Institucional -->
+  <header class="bg-amber-800 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-bold tracking-wide uppercase">Ministerio de Música</h1>
+        <p class="text-amber-200 text-xs">Retiro de Emaús — Cronograma</p>
+      </div>
+      <div class="bg-amber-900/60 p-2 rounded-xl border border-amber-700/50">
+        <span class="text-lg">🎶</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contenedor Principal -->
+  <main class="max-w-2xl mx-auto px-4 mt-6 space-y-6">
+
+    <% const dias = ['Viernes', 'Sábado', 'Domingo']; %>
+    
+    <% dias.forEach((dia, index) => { %>
+      <%  const momentos = data.filter(item => item.dia && item.dia.toLowerCase() === dia.toLowerCase()) || []; %>
+
+      <!-- Tarjeta Acordeón por Día -->
+      <div class="bg-white rounded-2xl shadow-sm border border-stone-200 overflow-hidden transition-all duration-300">
+        
+        <!-- Cabecera del Día (Clickeable para expandir/contraer) -->
+        <button onclick="toggleDia('<%= dia %>')" class="w-full flex items-center justify-between p-5 bg-gradient-to-r from-stone-50 to-white hover:from-amber-50/50 transition text-left">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg shadow-inner">
+              <%= dia[0] %>
+            </div>
+            <div>
+              <h2 class="text-lg font-extrabold text-stone-900 uppercase tracking-wide"><%= dia %></h2>
+              <p class="text-xs text-stone-500 font-medium"><%= momentos.length %> momentos programados</p>
+            </div>
+          </div>
+          <!-- Icono de flecha que rota -->
+          <div id="icon-<%= dia %>" class="w-8 h-8 rounded-full bg-stone-100 flex items-center justify-center text-stone-600 transition-transform duration-300 <%= index === 0 ? 'rotate-180' : '' %>">
+            ▼
+          </div>
+        </button>
+
+        <!-- Contenido Desplegable de Momentos (Dinámico desde Google Sheets) -->
+        <div id="content-<%= dia %>" class="border-t border-stone-100 p-4 bg-stone-50/50 space-y-3 <%= index === 0 ? '' : 'hidden' %>">
+          <% if (momentos.length > 0) { %>
+            <% momentos.forEach(item => { %>
+              <a href="/momento/<%= item.id %>" class="block bg-white rounded-xl p-4 shadow-sm border border-stone-200/80 hover:border-amber-500 hover:shadow-md transition group">
+                <div class="flex items-start justify-between">
+                  <div>
+                    <!-- Hora y Estado / Charlista -->
+                    <div class="flex items-center space-x-2 mb-1.5 flex-wrap gap-y-1">
+                      <span class="bg-amber-100 text-amber-900 font-mono text-xs px-2 py-0.5 rounded font-bold">
+                        <%= item.hora %>
+                      </span>
+                      <% if (item.charlista) { %>
+                        <span class="text-xs text-stone-500 bg-stone-100 px-2 py-0.5 rounded">
+                          👤 <%= item.charlista %>
+                        </span>
+                      <% } %>
+                    </div>
+                    <!-- Nombre del Momento -->
+                    <h3 class="text-base font-bold text-stone-900 group-hover:text-amber-800 transition">
+                      <%= item.momento %>
+                    </h3>
+                  </div>
+                  <span class="text-stone-300 group-hover:text-amber-600 font-bold text-lg transition self-center ml-2">&rsaquo;</span>
+                </div>
+
+                <!-- Preview de Canciones si existen en la hoja -->
+                <% if (item.canciones && item.canciones.length > 0 && item.canciones[0] !== '') { %>
+                  <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center text-xs text-stone-600">
+                    <span class="mr-1.5">🎵</span>
+                    <span class="truncate font-medium"><%= item.canciones.join(' • ') %></span>
+                  </div>
+                <% } %>
+              </a>
+            <% }); %>
+          <% } else { %>
+            <p class="text-xs text-stone-400 italic text-center py-4">No hay intervenciones registradas para este día en la hoja de cálculo.</p>
+          <% } %>
+        </div>
+
+      </div>
+    <% }); %>
+
+  </main>
+
+  <!-- Script simple para alternar la visibilidad de los días -->
+  <script>
+    function toggleDia(dia) {
+      const content = document.getElementById(`content-${dia}`);
+      const icon = document.getElementById(`icon-${dia}`);
+      
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        icon.classList.add('rotate-180');
+      } else {
+        content.classList.add('hidden');
+        icon.classList.remove('rotate-180');
+      }
+    }
+  </script>
+
+</body>
+</html>

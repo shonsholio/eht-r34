@@ -1,0 +1,21 @@
+{
+  "name": "r34_eht",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "description": "",
+  "dependencies": {
+    "@googleapis/sheets": "^18.1.1",
+    "cors": "^2.8.6",
+    "ejs": "^7.0.2",
+    "express": "^5.3.0",
+    "googleapis": "^187.0.0",
+    "sheetdb-node": "^0.0.12"
+  }
+}
