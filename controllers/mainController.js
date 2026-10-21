@@ -8,10 +8,25 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
     // Configurar autenticación con la Service Account
-const auth = new google.auth.GoogleAuth({
-  keyFile: path.join(__dirname, '../credentials.json'), // Ruta a tus credenciales JSON
+  
+let authOptions = {
   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
-});
+};
+
+if (process.env.GOOGLE_CREDENTIALS) {
+  // En Vercel: parseamos el string JSON guardado en las Environment Variables
+  authOptions.credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS);
+} else {
+  // En local: lee el archivo credentials.json de la raíz del proyecto
+  authOptions.keyFile = './credentials.json';
+}
+
+const auth = new google.auth.GoogleAuth(authOptions);
+
+// const auth = new google.auth.GoogleAuth({
+//   keyFile: path.join(__dirname, '../credentials.json'), // Ruta a tus credenciales JSON
+//   scopes: ['https://www.googleapis.com/auth/spreadsheets.readonly'],
+// });
 
 const SPREADSHEET_ID = '1-Nd_EtVn6fSFXQDIOemYmrjWKt2_hZLKq2Z21HQYgjA';
 
