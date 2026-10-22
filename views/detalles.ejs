@@ -1,0 +1,151 @@
+<%- include('partials/_header') %>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= actividad.titulo || 'Detalle del Momento' %> - Ministerio de Música Emaús</title>
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts & FontAwesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .chord { font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Header Superior / Botón Volver -->
+  <header class="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3 shadow-sm">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <a href="/" class="inline-flex items-center text-sm font-medium text-amber-700 hover:text-amber-800 transition-colors">
+        <i class="fa-solid fa-arrow-left mr-2"></i> Volver al Itinerario
+      </a>
+      <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 uppercase tracking-wider">
+        <%= actividad.dia || 'Emaús' %>
+      </span>
+    </div>
+  </header>
+
+  <main class="flex-grow max-w-md mx-auto w-full px-4 py-6 space-y-6">
+
+    <!-- Tarjeta Principal: Cabecera del Momento -->
+    <section class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-3">
+      <div class="flex items-center justify-between text-xs text-slate-500">
+        <span class="flex items-center font-medium text-slate-600">
+          <i class="fa-regular fa-clock mr-1.5 text-amber-600"></i> <%= actividad.hora || '00:00' %>
+        </span>
+        <% if (actividad.categoria) { %>
+          <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[11px] font-medium">
+            <%= actividad.categoria %>
+          </span>
+        <% } %>
+      </div>
+
+      <h1 class="text-2xl font-bold text-slate-900 leading-tight">
+        <%= actividad.momento || 'Nombre de la Actividad' %>
+      </h1>
+
+      <% if (actividad.descripcion) { %>
+        <p class="text-sm text-slate-600 leading-relaxed pt-1">
+          <%= actividad.descripcion %>
+        </p>
+      <% } %>
+    </section>
+
+    <!-- Ficha Técnica Musical (Tonalidad, Tiempo, Cifrado) -->
+    <% if (actividad.cancion) { %>
+      <section class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+          <h2 class="text-base font-bold text-slate-900 flex items-center">
+            <i class="fa-solid fa-music text-amber-600 mr-2"></i> Canción Asignada
+          </h2>
+          <span class="text-xs bg-amber-50 text-amber-800 font-semibold px-2.5 py-1 rounded-md border border-amber-200">
+            <%= actividad.cancion.tonalidad ? 'Tono: ' + actividad.cancion.tonalidad : 'Tono Ppal' %>
+          </span>
+        </div>
+
+        <!-- Detalles Armónicos -->
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <span class="text-slate-400 block font-medium">Nombre Canto</span>
+            <span class="text-slate-800 font-bold text-sm block truncate"><%= actividad.cancion.nombre || 'Por definir' %></span>
+          </div>
+          <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+            <span class="text-slate-400 block font-medium">Ritmo / Compás</span>
+            <span class="text-slate-800 font-bold text-sm block"><%= actividad.cancion.ritmo || '4/4 Balada' %></span>
+          </div>
+        </div>
+
+        <!-- Progreso o Acordes Clave -->
+        <% if (actividad.cancion.acordesClave) { %>
+          <div class="bg-amber-50/60 p-3.5 rounded-xl border border-amber-100">
+            <span class="text-xs text-amber-900 font-medium block mb-1">Estructura Armónica / Secuencia:</span>
+            <p class="chord text-sm text-amber-800 tracking-wide">
+              <%= actividad.cancion.acordesClave %>
+            </p>
+          </div>
+        <% } %>
+
+        <!-- Letra y Cifrado -->
+        <% if (actividad.cancion.letra) { %>
+          <div class="pt-2">
+            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Letra / Cifrado</h3>
+            <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs leading-relaxed whitespace-pre-line font-mono overflow-x-auto shadow-inner">
+<%= actividad.cancion.letra %>
+            </div>
+          </div>
+        <% } %>
+
+        <!-- Botones de Enlace (YouTube / Spotify / PDF) -->
+        <% if (actividad.cancion.linkAudio || actividad.cancion.linkPdf) { %>
+          <div class="pt-2 flex flex-col sm:flex-row gap-2">
+            <% if (actividad.cancion.linkAudio) { %>
+              <a href="<%= actividad.cancion.linkAudio %>" target="_blank" rel="noopener noreferrer" 
+                 class="flex-1 inline-flex items-center justify-center bg-red-600 hover:bg-red-700 text-white font-medium text-xs py-2.5 px-4 rounded-xl transition-colors">
+                <i class="fa-brands fa-youtube mr-2 text-sm"></i> Escuchar Referencia
+              </a>
+            <% } %>
+            <% if (actividad.cancion.linkPdf) { %>
+              <a href="<%= actividad.cancion.linkPdf %>" target="_blank" rel="noopener noreferrer" 
+                 class="flex-1 inline-flex items-center justify-center bg-slate-800 hover:bg-slate-900 text-white font-medium text-xs py-2.5 px-4 rounded-xl transition-colors">
+                <i class="fa-regular fa-file-pdf mr-2 text-sm"></i> Descargar Partitura
+              </a>
+            <% } %>
+          </div>
+        <% } %>
+      </section>
+    <% } %>
+
+    <!-- Observaciones Generales o Logística de Música -->
+    <% if (actividad.notas) { %>
+      <section class="bg-amber-50/50 rounded-2xl p-4 border border-amber-200/60 text-xs text-amber-900 space-y-1">
+        <span class="font-bold flex items-center text-amber-800">
+          <i class="fa-solid fa-circle-info mr-1.5"></i> Indicaciones para el equipo
+        </span>
+          <p class="leading-relaxed text-amber-800/90">
+          Canción de entrada // <%= actividad.entrada %> // Tono - <%= actividad.tonoin %>
+        </p>
+           <p class="leading-relaxed text-amber-800/90">
+          Canción de salida // <%= actividad.salida %> // Tono - <%= actividad.tonout %>
+        </p>
+        <p class="leading-relaxed text-amber-800/90">
+          <%= actividad.notas %>
+        </p>
+      </section>
+    <% } %>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto py-6 text-center text-xs text-slate-400 border-t border-slate-200 bg-white">
+    <p>Ministerio de Música Emaús Hombres Torcoroma&copy; 2026</p>
+  </footer>
+
+</body>
+</html>
